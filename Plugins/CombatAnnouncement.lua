@@ -84,6 +84,47 @@ local SpellTranslation = {
 	["deathcoil"] = BS["Death Coil"],
 }
 
+
+local SpellVerbMapping = {
+	["pummel"] = "Interrupting",
+	["shieldbash"] = "Interrupting",
+	["kick"] = "Interrupting",
+	["counterspell"] = "Interrupting",
+	["earthshock"] = "Interrupting",
+	["taunt"] = "Taunting",
+	["growl"] = "Taunting",
+	["handofreckoning"] = "Taunting",
+	["challengingshout"] = "AOE Taunting",
+	["intimidatingshout"] = "AOE Fearing",
+	["concussionblow"] = "Stunning",
+	["kidneyshot"] = "Stunning",
+	["cheapshot"] = "Stunning",
+	["hammerofjustice"] = "Stunning",
+	["pounce"] = "Stunning",
+	["bash"] = "Stunning",
+	["blind"] = "Blinding",
+	["gouge"] = "Stunning",
+	["disarm"] = "Disarming",
+	["innervate"] = "Innervating",
+	["hibernate"] = "Sleeping",
+	["entanglingroots"] = "Rooting",
+	["wyvernsting"] = "Sleeping",
+	["scattershot"] = "Blinding",
+	["tranquilshot"] = "Taunting",
+	["deathcoil"] = "Fearing",
+	["psychicscream"] = "AOE Fearing",
+	["earthshakerslam"] = "Stunning"
+}
+
+
+local NonTargetSpells = {
+	challengingshout = true,
+	intimidatingshout = true,
+	psychicscream = true,
+}
+
+
+
 BigWigsCombatAnnouncement.defaultDB = {
 	-- Warrior
 	pummel = true,
@@ -278,7 +319,6 @@ if class == "WARRIOR" then
 			},
 		}
 	}
-
 elseif class == "ROGUE" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -400,7 +440,6 @@ elseif class == "ROGUE" then
 			},
 		}
 	}
-
 elseif class == "DRUID" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -546,7 +585,6 @@ elseif class == "DRUID" then
 			},
 		}
 	}
-
 elseif class == "HUNTER" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -644,7 +682,6 @@ elseif class == "HUNTER" then
 			},
 		}
 	}
-
 elseif class == "MAGE" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -718,7 +755,6 @@ elseif class == "MAGE" then
 			},
 		}
 	}
-
 elseif class == "PALADIN" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -804,7 +840,6 @@ elseif class == "PALADIN" then
 			},
 		}
 	}
-
 elseif class == "PRIEST" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -878,7 +913,6 @@ elseif class == "PRIEST" then
 			},
 		}
 	}
-
 elseif class == "SHAMAN" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -964,7 +998,6 @@ elseif class == "SHAMAN" then
 			},
 		}
 	}
-
 elseif class == "WARLOCK" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -1038,7 +1071,6 @@ elseif class == "WARLOCK" then
 			},
 		}
 	}
-
 else
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -1108,7 +1140,8 @@ BigWigsCombatAnnouncement.external = true
 --         Events           --
 ------------------------------
 
-function BigWigsCombatAnnouncement:CastEvent(id, name, rank, fullname, caststart, caststop, castduration, castdelay, activetarget)
+function BigWigsCombatAnnouncement:CastEvent(id, name, rank, fullname, caststart, caststop, castduration, castdelay,
+											 activetarget)
 	if not BigWigsCombatAnnouncement:IsBroadcasting() then
 		return
 	end
@@ -1116,12 +1149,12 @@ function BigWigsCombatAnnouncement:CastEvent(id, name, rank, fullname, caststart
 	for optionname, translatedname in pairs(SpellTranslation) do
 		if self.db.profile[optionname] == true then
 			if name == translatedname then
-				local CombatAnnouncementString = "Casted " .. name
-				if activetarget and activetarget ~= "none" then
-					CombatAnnouncementString = CombatAnnouncementString .. " on " .. activetarget
+				local CombatAnnouncementString = SpellVerbMapping[optionname] .. " (" .. name .. ") "
+				if activetarget and activetarget ~= "none" and not NonTargetSpells[optionname] then
+					CombatAnnouncementString = CombatAnnouncementString .. " " .. activetarget
 					BigWigsCombatAnnouncement:AnnounceAbility(CombatAnnouncementString, activetarget, name) -- Pass target for whispers
 				else
-					BigWigsCombatAnnouncement:AnnounceAbility(CombatAnnouncementString) -- regular announcements without target
+					BigWigsCombatAnnouncement:AnnounceAbility(CombatAnnouncementString)                     -- regular announcements without target
 				end
 			end
 		end
@@ -1138,10 +1171,10 @@ end
 
 function BigWigsCombatAnnouncement:IsBroadcasting()
 	return self.db.profile.broadcastsay or
-			self.db.profile.broadcastparty or
-			self.db.profile.broadcastraid or
-			self.db.profile.broadcastbg or
-			self.db.profile.broadcastwhisper
+		self.db.profile.broadcastparty or
+		self.db.profile.broadcastraid or
+		self.db.profile.broadcastbg or
+		self.db.profile.broadcastwhisper
 end
 
 ------------------------------
@@ -1151,7 +1184,7 @@ end
 function BigWigsCombatAnnouncement:AnnounceAbility(msg, target, spellName)
 	-- Check if the spell is Innervate and the target is hostile
 	if spellName == L["Innervate"] and target
-			and (not UnitIsFriend("player", "target") or UnitIsUnit("player", "target") or not UnitIsPlayer("target")) then
+		and (not UnitIsFriend("player", "target") or UnitIsUnit("player", "target") or not UnitIsPlayer("target")) then
 		return -- Ignore announcements for Innervate on hostile targets, NPCs, or the player itself
 	end
 
@@ -1174,10 +1207,10 @@ function BigWigsCombatAnnouncement:AnnounceAbility(msg, target, spellName)
 	end
 	-- Only send whisper if the spell name has a target that is a friendly player
 	if self.db.profile.broadcastwhisper and
-			target and
-			UnitIsFriend("player", "target") and
-			not UnitIsUnit("player", "target") and
-			UnitIsPlayer("target") then
+		target and
+		UnitIsFriend("player", "target") and
+		not UnitIsUnit("player", "target") and
+		UnitIsPlayer("target") then
 		local targetName = UnitName("target") or target -- Get the target's name without worrying about the raid mark
 		SendChatMessage("Casted " .. spellName .. " on you", "WHISPER", nil, targetName)
 	end

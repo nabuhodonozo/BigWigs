@@ -85,6 +85,7 @@ local SpellTranslation = {
 }
 
 
+
 local SpellVerbMapping = {
 	["pummel"] = "Interrupting",
 	["shieldbash"] = "Interrupting",
@@ -117,7 +118,7 @@ local SpellVerbMapping = {
 }
 
 
-local NonTargetSpells = {
+local NonTargetableSpells = {
 	challengingshout = true,
 	intimidatingshout = true,
 	psychicscream = true,
@@ -173,6 +174,63 @@ BigWigsCombatAnnouncement.defaultDB = {
 }
 
 BigWigsCombatAnnouncement.consoleCmd = L["combatannouncement"]
+
+-- Shared broadcast options
+local SharedBroadcastOptions = {
+    spacer = {
+        type = "header",
+        name = " ",
+        order = 96,
+    },
+    broadcastsay = {
+        type = "toggle",
+        name = "Broadcast Say",
+        order = 97,
+        desc = "Toggle broadcasting the messages to the Say channel.",
+        get = function()
+            return BigWigsCombatAnnouncement.db.profile.broadcastsay
+        end,
+        set = function(v)
+            BigWigsCombatAnnouncement.db.profile.broadcastsay = v
+        end,
+    },
+    broadcastparty = {
+        type = "toggle",
+        name = "Broadcast Party",
+        order = 98,
+        desc = "Toggle broadcasting the messages to the Party channel.",
+        get = function()
+            return BigWigsCombatAnnouncement.db.profile.broadcastparty
+        end,
+        set = function(v)
+            BigWigsCombatAnnouncement.db.profile.broadcastparty = v
+        end,
+    },
+    broadcastraid = {
+        type = "toggle",
+        name = "Broadcast Raid",
+        order = 99,
+        desc = "Toggle broadcasting the messages to the Raid channel.",
+        get = function()
+            return BigWigsCombatAnnouncement.db.profile.broadcastraid
+        end,
+        set = function(v)
+            BigWigsCombatAnnouncement.db.profile.broadcastraid = v
+        end,
+    },
+    broadcastbg = {
+        type = "toggle",
+        name = "Broadcast BG",
+        order = 100,
+        desc = "Toggle broadcasting the messages to the Battleground channel (Bloodring).",
+        get = function()
+            return BigWigsCombatAnnouncement.db.profile.broadcastbg
+        end,
+        set = function(v)
+            BigWigsCombatAnnouncement.db.profile.broadcastbg = v
+        end,
+    },
+}
 
 if class == "WARRIOR" then
 	BigWigsCombatAnnouncement.consoleOptions = {
@@ -1150,7 +1208,7 @@ function BigWigsCombatAnnouncement:CastEvent(id, name, rank, fullname, caststart
 		if self.db.profile[optionname] == true then
 			if name == translatedname then
 				local CombatAnnouncementString = SpellVerbMapping[optionname] .. " (" .. name .. ") "
-				if activetarget and activetarget ~= "none" and not NonTargetSpells[optionname] then
+				if activetarget and activetarget ~= "none" and not NonTargetableSpells[optionname] then
 					CombatAnnouncementString = CombatAnnouncementString .. " " .. activetarget
 					BigWigsCombatAnnouncement:AnnounceAbility(CombatAnnouncementString, activetarget, name) -- Pass target for whispers
 				else
@@ -1193,7 +1251,7 @@ function BigWigsCombatAnnouncement:AnnounceAbility(msg, target, spellName)
 		return
 	end
 
-	if self.db.profile.broadcastsay and (GetNumPartyMembers("player") > 0 or UnitInRaid("player")) then
+	if self.db.profile.broadcastsay and (GetNumPartyMembers("player") >= 0 or UnitInRaid("player")) then
 		SendChatMessage(msg, "SAY")
 	end
 	if self.db.profile.broadcastparty and GetNumPartyMembers("player") > 0 then
@@ -1214,4 +1272,14 @@ function BigWigsCombatAnnouncement:AnnounceAbility(msg, target, spellName)
 		local targetName = UnitName("target") or target -- Get the target's name without worrying about the raid mark
 		SendChatMessage("Casted " .. spellName .. " on you", "WHISPER", nil, targetName)
 	end
+end
+
+
+-- Merges all key-value pairs from sharedOptions into baseOptions
+-- If a key exists in both, sharedOptions will overwrite baseOptions.
+local function MergeTables(baseOptions, sharedOptions)
+    for key, value in pairs(sharedOptions) do
+        baseOptions[key] = value
+    end
+    return baseOptions
 end

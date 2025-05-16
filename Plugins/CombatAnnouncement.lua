@@ -176,7 +176,7 @@ BigWigsCombatAnnouncement.defaultDB = {
 BigWigsCombatAnnouncement.consoleCmd = L["combatannouncement"]
 
 -- Shared broadcast options
-local SharedBroadcastOptions = {
+SharedBroadcastOptions = {
     spacer = {
         type = "header",
         name = " ",
@@ -231,152 +231,143 @@ local SharedBroadcastOptions = {
         end,
     },
 }
+--- UTIL---
+
+-- Merges all key-value pairs from sharedOptions into baseOptions
+-- If a key exists in both, sharedOptions will overwrite baseOptions.
+function MergeTables(baseOptions, sharedOptions)
+	for key, value in pairs(sharedOptions) do
+        baseOptions[key] = value
+    end
+    return baseOptions
+end
 
 if class == "WARRIOR" then
+	-- 	dddd = {
+	-- 		kick = {
+	-- 			type = "toggle",
+	-- 			name = BS["Kick"],
+	-- 			order = 1,
+	-- 			desc = string.format(L["Toggle %s display."], BS["Kick"]),
+	-- 			get = function()
+	-- 				return BigWigsCombatAnnouncement.db.profile.kick
+	-- 			end,
+	-- 			set = function(v)
+	-- 				BigWigsCombatAnnouncement.db.profile.kick = v
+	-- 			end,
+	-- 		},}
+
+
+	-- 	BigWigsCombatAnnouncement.consoleOptions = {
+	-- 	type = "group",
+	-- 	name = "Combat Announcement",
+	-- 	desc = "Announces in chat channel on important instant casts.",
+	-- 	args = 	dddd
+	-- }
+		
+
+
+	
+	 WarriorArgs = {
+		pummel = {
+			type = "toggle",
+			name = BS["Pummel"],
+			order = 1,
+			desc = string.format(L["Toggle %s display."], BS["Pummel"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.pummel
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.pummel = v
+			end,
+		},
+		shieldbash = {
+			type = "toggle",
+			name = BS["Shield Bash"],
+			order = 2,
+			desc = string.format(L["Toggle %s display."], BS["Shield Bash"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.shieldbash
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.shieldbash = v
+			end,
+		},
+		taunt = {
+			type = "toggle",
+			name = BS["Taunt"],
+			order = 3,
+			desc = string.format(L["Toggle %s display."], BS["Taunt"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.taunt
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.taunt = v
+			end,
+		},
+		disarm = {
+			type = "toggle",
+			name = BS["Disarm"],
+			order = 4,
+			desc = string.format(L["Toggle %s display."], BS["Disarm"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.disarm
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.disarm = v
+			end,
+		},
+		challengingshout = {
+			type = "toggle",
+			name = BS["Challenging Shout"],
+			order = 5,
+			desc = string.format(L["Toggle %s display."], BS["Challenging Shout"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.challengingshout
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.challengingshout = v
+			end,
+		},
+		intimidatingshout = {
+			type = "toggle",
+			name = BS["Intimidating Shout"],
+			order = 6,
+			desc = string.format(L["Toggle %s display."], BS["Intimidating Shout"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.intimidatingshout
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.intimidatingshout = v
+			end,
+		},
+		concussionblow = {
+			type = "toggle",
+			name = BS["Concussion Blow"],
+			order = 7,
+			desc = string.format(L["Toggle %s display."], BS["Concussion Blow"]),
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.concussionblow
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.concussionblow = v
+			end,
+		},
+	}
+
+ 	MergeTables(WarriorArgs, SharedBroadcastOptions)
+
+	-- for k, v in pairs(Args) do
+	-- 	DEFAULT_CHAT_FRAME:AddMessage("DEBUG: option key: " .. tostring(k))
+	-- end
 	BigWigsCombatAnnouncement.consoleOptions = {
+
 		type = "group",
 		name = "Combat Announcement",
 		desc = "Announces in chat channel on important instant casts.",
-		args = {
-			pummel = {
-				type = "toggle",
-				name = BS["Pummel"],
-				order = 1,
-				desc = string.format(L["Toggle %s display."], BS["Pummel"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.pummel
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.pummel = v
-				end,
-			},
-			shieldbash = {
-				type = "toggle",
-				name = BS["Shield Bash"],
-				order = 2,
-				desc = string.format(L["Toggle %s display."], BS["Shield Bash"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.shieldbash
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.shieldbash = v
-				end,
-			},
-			taunt = {
-				type = "toggle",
-				name = BS["Taunt"],
-				order = 3,
-				desc = string.format(L["Toggle %s display."], BS["Taunt"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.taunt
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.taunt = v
-				end,
-			},
-			disarm = {
-				type = "toggle",
-				name = BS["Disarm"],
-				order = 4,
-				desc = string.format(L["Toggle %s display."], BS["Disarm"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.disarm
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.disarm = v
-				end,
-			},
-			challengingshout = {
-				type = "toggle",
-				name = BS["Challenging Shout"],
-				order = 5,
-				desc = string.format(L["Toggle %s display."], BS["Challenging Shout"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.challengingshout
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.challengingshout = v
-				end,
-			},
-			intimidatingshout = {
-				type = "toggle",
-				name = BS["Intimidating Shout"],
-				order = 6,
-				desc = string.format(L["Toggle %s display."], BS["Intimidating Shout"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.intimidatingshout
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.intimidatingshout = v
-				end,
-			},
-			concussionblow = {
-				type = "toggle",
-				name = BS["Concussion Blow"],
-				order = 7,
-				desc = string.format(L["Toggle %s display."], BS["Concussion Blow"]),
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.concussionblow
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.concussionblow = v
-				end,
-			},
-			spacer = {
-				type = "header",
-				name = " ",
-				order = 96,
-			},
-			broadcastsay = {
-				type = "toggle",
-				name = "Broadcast Say",
-				order = 97,
-				desc = "Toggle broadcasting the messages to the Say channel.",
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.broadcastsay
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.broadcastsay = v
-				end,
-			},
-			broadcastparty = {
-				type = "toggle",
-				name = "Broadcast Party",
-				order = 98,
-				desc = "Toggle broadcasting the messages to the Party channel.",
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.broadcastparty
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.broadcastparty = v
-				end,
-			},
-			broadcastraid = {
-				type = "toggle",
-				name = "Broadcast Raid",
-				order = 99,
-				desc = "Toggle broadcasting the messages to the Raid channel.",
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.broadcastraid
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.broadcastraid = v
-				end,
-			},
-			broadcastbg = {
-				type = "toggle",
-				name = "Broadcast BG",
-				order = 100,
-				desc = "Toggle broadcasting the messages to the Battleground channel (Bloodring).",
-				get = function()
-					return BigWigsCombatAnnouncement.db.profile.broadcastbg
-				end,
-				set = function(v)
-					BigWigsCombatAnnouncement.db.profile.broadcastbg = v
-				end,
-			},
-		}
+		args = WarriorArgs
 	}
+	
 elseif class == "ROGUE" then
 	BigWigsCombatAnnouncement.consoleOptions = {
 		type = "group",
@@ -1272,14 +1263,4 @@ function BigWigsCombatAnnouncement:AnnounceAbility(msg, target, spellName)
 		local targetName = UnitName("target") or target -- Get the target's name without worrying about the raid mark
 		SendChatMessage("Casted " .. spellName .. " on you", "WHISPER", nil, targetName)
 	end
-end
-
-
--- Merges all key-value pairs from sharedOptions into baseOptions
--- If a key exists in both, sharedOptions will overwrite baseOptions.
-local function MergeTables(baseOptions, sharedOptions)
-    for key, value in pairs(sharedOptions) do
-        baseOptions[key] = value
-    end
-    return baseOptions
 end

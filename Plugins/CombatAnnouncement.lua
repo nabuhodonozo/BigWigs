@@ -176,7 +176,7 @@ BigWigsCombatAnnouncement.defaultDB = {
 BigWigsCombatAnnouncement.consoleCmd = L["combatannouncement"]
 
 -- Shared broadcast options
-SharedBroadcastOptions = {
+local SharedBroadcastOptions = {
     spacer = {
         type = "header",
         name = " ",
@@ -230,17 +230,25 @@ SharedBroadcastOptions = {
             BigWigsCombatAnnouncement.db.profile.broadcastbg = v
         end,
     },
-}
---- UTIL---
+	    spacer = {
+        type = "header",
+        name = " ",
+        order = 96,
+    },
+    announceTarget = {
+        type = "toggle",
+        name = "Broadcast BG",
+        order = 100,
+        desc = "Toggle broadcasting the messages to the Battleground channel (Bloodring).",
+        get = function()
+            return BigWigsCombatAnnouncement.db.profile.broadcastbg
+        end,
+        set = function(v)
+            BigWigsCombatAnnouncement.db.profile.broadcastbg = v
+        end,
+    },
 
--- Merges all key-value pairs from sharedOptions into baseOptions
--- If a key exists in both, sharedOptions will overwrite baseOptions.
-local function MergeTables(baseOptions, sharedOptions)
-	for key, value in pairs(sharedOptions) do
-        baseOptions[key] = value
-    end
-    return baseOptions
-end
+}
 
 local abilityOptions = {}
 
@@ -468,6 +476,23 @@ elseif class == "DRUID" then
 				BigWigsCombatAnnouncement.db.profile.entanglingroots = v
 			end,
 		},
+		spacer = {
+			type = "header",
+			name = " ",
+			order = 6,
+		},
+		broadcastwhisper = {
+			type = "toggle",
+			name = "Broadcast Whisper",
+			order = 7,
+			desc = "Toggle broadcasting the messages to the Whisper channel.",
+			get = function()
+				return BigWigsCombatAnnouncement.db.profile.broadcastwhisper
+			end,
+			set = function(v)
+				BigWigsCombatAnnouncement.db.profile.broadcastwhisper = v
+			end,
+		},
 	}
 elseif class == "HUNTER" then
 	abilityOptions = {
@@ -617,7 +642,10 @@ else
 	abilityOptions = {}
 end
 
-MergeTables(abilityOptions, SharedBroadcastOptions)
+--MergeTables sharedOptions into abilityOptions
+for key, value in pairs(SharedBroadcastOptions) do
+	abilityOptions[key] = value
+end
 
 BigWigsCombatAnnouncement.consoleOptions = {
 	type = "group",

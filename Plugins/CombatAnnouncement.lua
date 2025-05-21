@@ -57,6 +57,7 @@ local SpellTranslation = {
 	["pummel"] = BS["Pummel"],
 	["shieldbash"] = BS["Shield Bash"],
 	["taunt"] = BS["Taunt"],
+	["mockingblow"] = BS["Mocking Blow"],
 	["handofreckoning"] = L["Hand of Reckoning"],
 	["earthshakerslam"] = L["Earthshaker Slam"],
 	["innervate"] = BS["Innervate"], -- Added Innervate to the spell translations
@@ -84,8 +85,6 @@ local SpellTranslation = {
 	["deathcoil"] = BS["Death Coil"],
 }
 
-
-
 local SpellVerbMapping = {
 	["pummel"] = "Interrupting",
 	["shieldbash"] = "Interrupting",
@@ -95,6 +94,7 @@ local SpellVerbMapping = {
 	["taunt"] = "Taunting",
 	["growl"] = "Taunting",
 	["handofreckoning"] = "Taunting",
+	["mockingblow"] = "Taunting",
 	["challengingshout"] = "AOE Taunting",
 	["intimidatingshout"] = "AOE Fearing",
 	["concussionblow"] = "Stunning",
@@ -117,14 +117,11 @@ local SpellVerbMapping = {
 	["earthshakerslam"] = "Stunning"
 }
 
-
 local NonTargetableSpells = {
 	challengingshout = true,
 	intimidatingshout = true,
 	psychicscream = true,
 }
-
-
 
 BigWigsCombatAnnouncement.defaultDB = {
 	-- Warrior
